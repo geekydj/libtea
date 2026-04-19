@@ -1,23 +1,27 @@
 #pragma once
-
-#include "libtea/ml/base.hpp"
+#include <vector>
 
 namespace libtea::ml {
 
-class LinearRegression : public Estimator {
+using Vector = std::vector<double>;
+using Matrix = std::vector<std::vector<double>>;
+
+class LinearRegression {
 private:
     Vector weights;
+    double bias;
 
-    Vector mean;
-    Vector stddev;
-
-    Matrix normalize(const Matrix& X) const;
+    double lr;
+    int epochs;
 
 public:
-    void fit(const Matrix& X, const Vector& y) override;
-    Vector predict(const Matrix& X) override;
+    LinearRegression(double learning_rate = 0.01, int iterations = 1000);
 
-    Vector getWeights() const;
+    void fit(const Matrix& X, const Vector& y);
+    Vector predict(const Matrix& X);
+
+private:
+    double dot(const Vector& a, const Vector& b);
 };
 
 }

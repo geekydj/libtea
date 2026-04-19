@@ -10,9 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # -------------------------
 add_library(libtea
     src/linear_regression.cpp
-    src/metrics.cpp
 )
-
 # include directory for users of the library
 target_include_directories(libtea
     PUBLIC
