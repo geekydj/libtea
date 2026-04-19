@@ -1,107 +1,63 @@
 #include "libtea/ml/linear_regression.hpp"
-#include <cmath>
+#include <stdexcept>
 
 namespace libtea::ml {
 
-// ---------------- helpers ----------------
+LinearRegression::LinearRegression(double learning_rate, int iterations)
+    : lr(learning_rate), epochs(iterations), bias(0.0) {}
 
-static Vector compute_mean(const Matrix& X) {
-    Vector mean(X[0].size(), 0.0);
-
-    for (auto &row : X)
-        for (size_t j = 0; j < row.size(); j++)
-            mean[j] += row[j];
-
-    for (auto &m : mean)
-        m /= X.size();
-
-    return mean;
+double LinearRegression::dot(const Vector& a, const Vector& b) {
+    double sum = 0.0;
+    for (size_t i = 0; i < a.size(); i++)
+        sum += a[i] * b[i];
+    return sum;
 }
-
-static Vector compute_std(const Matrix& X, const Vector& mean) {
-    Vector std(X[0].size(), 0.0);
-
-    for (auto &row : X)
-        for (size_t j = 0; j < row.size(); j++)
-            std[j] += (row[j] - mean[j]) * (row[j] - mean[j]);
-
-    for (auto &s : std)
-        s = std::sqrt(s / X.size() + 1e-8);
-
-    return std;
-}
-
-// ---------------- normalization ----------------
-
-Matrix LinearRegression::normalize(const Matrix& X) const {
-    Matrix out = X;
-
-    for (auto &row : out)
-        for (size_t j = 0; j < row.size(); j++)
-            row[j] = (row[j] - mean[j]) / stddev[j];
-
-    return out;
-}
-
-// ---------------- training ----------------
 
 void LinearRegression::fit(const Matrix& X, const Vector& y) {
+
     if (X.empty()) return;
 
-    size_t d = X[0].size();
+    int n_samples = X.size();
+    int n_features = X[0].size();
 
-    mean = compute_mean(X);
-    stddev = compute_std(X, mean);
+    weights.assign(n_features, 0.0);
+    bias = 0.0;
 
-    Matrix Xn = normalize(X);
+    for (int epoch = 0; epoch < epochs; epoch++) {
 
-    weights.assign(d, 0.0);
+        Vector dw(n_features, 0.0);
+        double db = 0.0;
 
-    double lr = 0.01;
-    int epochs = 1000;
+        for (int i = 0; i < n_samples; i++) {
 
-    for (int e = 0; e < epochs; e++) {
-        Vector grad(d, 0.0);
-
-        for (size_t i = 0; i < Xn.size(); i++) {
-            double pred = 0.0;
-
-            for (size_t j = 0; j < d; j++)
-                pred += Xn[i][j] * weights[j];
-
+            double pred = dot(X[i], weights) + bias;
             double error = pred - y[i];
 
-            for (size_t j = 0; j < d; j++)
-                grad[j] += error * Xn[i][j];
+            for (int j = 0; j < n_features; j++) {
+                dw[j] += error * X[i][j];
+            }
+
+            db += error;
         }
 
-        for (size_t j = 0; j < d; j++)
-            weights[j] -= lr * grad[j] / Xn.size();
+        for (int j = 0; j < n_features; j++) {
+            weights[j] -= lr * (dw[j] / n_samples);
+        }
+
+        bias -= lr * (db / n_samples);
     }
 }
-
-// ---------------- prediction ----------------
 
 Vector LinearRegression::predict(const Matrix& X) {
-    Matrix Xn = normalize(X);
 
-    Vector res;
-    res.reserve(X.size());
+    Vector result;
 
-    for (auto &row : Xn) {
-        double val = 0.0;
-
-        for (size_t j = 0; j < weights.size(); j++)
-            val += row[j] * weights[j];
-
-        res.push_back(val);
+    for (const auto& row : X) {
+        double pred = dot(row, weights) + bias;
+        result.push_back(pred);
     }
 
-    return res;
-}
-
-Vector LinearRegression::getWeights() const {
-    return weights;
+    return result;
 }
 
 }
