@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblibtea.a CMakeFiles/libtea.dir/src/linear_regression.cpp.o CMakeFiles/libtea.dir/src/metrics.cpp.o
+/usr/bin/ranlib liblibtea.a
