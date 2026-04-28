@@ -1,0 +1,61 @@
+@startuml
+!include ../um-theme.puml
+
+title libtea — Class Diagram (Core API)
+
+left to right direction
+
+package "libtea::ml" {
+
+  class Vector <<typedef>>
+  class Matrix <<typedef>>
+
+  interface Estimator {
+    +fit(X: Matrix, y: Vector)
+    +predict(X: Matrix): Vector
+  }
+
+  class LinearRegression {
+    -weights: Vector
+    -bias: double
+    -lr: double
+    -epochs: int
+    -mean: Vector
+    -stddev: Vector
+    --
+    -dot(a: Vector, b: Vector): double
+    --
+    +LinearRegression(learning_rate: double = 0.01, iterations: int = 1000)
+    +fit(X: Matrix, y: Vector)
+    +predict(X: Matrix): Vector
+    +getWeights(): Vector
+  }
+
+  Estimator <|.. LinearRegression
+  LinearRegression ..> Vector
+  LinearRegression ..> Matrix
+
+  class SplitData <<struct>> {
+    +X_train: Matrix
+    +X_test: Matrix
+    +y_train: Vector
+    +y_test: Vector
+  }
+
+  class "metrics.hpp" as metrics <<header>> {
+    +mae(y_true: Vector, y_pred: Vector): double
+    +mse(y_true: Vector, y_pred: Vector): double
+    +r2_score(y_true: Vector, y_pred: Vector): double
+  }
+
+  class "train_test_split.hpp" as tts <<header>> {
+    +train_test_split(X: Matrix, y: Vector, test_size: double = 0.2, random_seed: int = 42): SplitData
+  }
+
+  tts --> SplitData : returns
+  tts ..> Matrix
+  tts ..> Vector
+  metrics ..> Vector
+}
+
+@enduml

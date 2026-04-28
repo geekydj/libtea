@@ -1,0 +1,37 @@
+@startuml
+!include ../um-theme.puml
+
+title libtea — Package Overview
+
+left to right direction
+
+package "libtea::ml" as ML {
+  [Estimator] as Estimator
+  [LinearRegression] as LinearRegression
+  [linear_regression.cpp\n(implementation)] as LRImpl
+  [metrics.hpp\n(mae, mse, r2_score)] as Metrics
+  [train_test_split.hpp\n(train_test_split, SplitData)] as Split
+  [base.hpp\n(Vector, Matrix)] as Types
+  [SplitData] as SplitData
+}
+
+[examples/basic_usage.cpp] as Example
+
+Example --> Split : calls
+Example --> LinearRegression : uses
+Example --> Metrics : calls
+
+LinearRegression ..|> Estimator
+LinearRegression --> Types : uses
+LinearRegression ..> LRImpl : defined in
+Metrics --> Types : uses Vector
+Split --> Types : uses Vector/Matrix
+Split --> SplitData : returns
+
+note right of LinearRegression
+  LinearRegression stores
+  mean/stddev from fit()
+  and reuses them in predict().
+end note
+
+@enduml

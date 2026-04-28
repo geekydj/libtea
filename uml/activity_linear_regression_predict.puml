@@ -1,0 +1,19 @@
+@startuml
+!include ../um-theme.puml
+
+title libtea — Activity (LinearRegression::predict)
+
+start
+
+:Xn = normalize(X, mean, stddev)\n(from last fit());
+:result = [];
+
+while (more rows?) is (yes)
+  :row = next row;
+  :result.push_back(dot(row, weights) + bias);
+endwhile (no)
+
+:return result;
+stop
+
+@enduml

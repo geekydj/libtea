@@ -1,0 +1,39 @@
+' uml-theme.puml — Official UML palette (HEX)
+
+' Base
+skinparam BackgroundColor #FFFFFF
+skinparam DefaultFontColor #000000
+skinparam Shadowing false
+
+' Primary
+skinparam ArrowColor #1257D1
+skinparam BorderColor #1257D1
+skinparam TitleFontColor #00396E
+skinparam TitleBackgroundColor #FFFFFF
+
+' Class / component specific (ensures SVG link colors)
+skinparam ClassBorderColor #1257D1
+skinparam ClassArrowColor #1257D1
+skinparam ComponentBorderColor #1257D1
+skinparam ComponentArrowColor #1257D1
+skinparam PackageArrowColor #1257D1
+
+' Secondary
+skinparam PackageBorderColor #00396E
+skinparam PackageBackgroundColor #62DAFC
+skinparam ClassBackgroundColor #5ADBFF
+skinparam NoteBackgroundColor #FFD140
+
+' Text
+skinparam ClassFontColor #000000
+skinparam NoteFontColor #000000
+
+' Sequence tuning
+skinparam SequenceLifeLineBorderColor #878A8F
+skinparam SequenceLifeLineBackgroundColor #FFFFFF
+
+' Optional accents (use sparingly)
+' skinparam ActivityBackgroundColor #62DAFC
+' skinparam ActivityBorderColor #00396E
+' skinparam StateBackgroundColor #62DAFC
+' skinparam StateBorderColor #00396E
