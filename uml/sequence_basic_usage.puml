@@ -1,0 +1,46 @@
+@startuml
+!include ../um-theme.puml
+
+title libtea — Sequence (basic_usage)
+
+actor User
+participant "examples/basic_usage.cpp\nmain()" as Main
+participant "train_test_split" as Split
+participant "LinearRegression" as LR
+participant "metrics\n(mae/mse/r2_score)" as Metrics
+participant "stdout" as Out
+
+User -> Main : run
+
+group Split dataset
+Main -> Split : train_test_split(X, y, 0.2, 42)
+Split --> Main : SplitData
+end
+
+group Train
+Main -> LR : LinearRegression(0.01, 1000)
+Main -> LR : fit(X_train, y_train)
+end
+
+group Predict
+Main -> LR : predict(X_test)
+LR --> Main : y_pred
+end
+
+group Evaluate
+Main -> Metrics : mae(y_test, y_pred)
+Metrics --> Main : MAE
+Main -> Metrics : mse(y_test, y_pred)
+Metrics --> Main : MSE
+Main -> Metrics : r2_score(y_test, y_pred)
+Metrics --> Main : R2
+end
+
+Main -> Out : print(MAE, MSE, R2)
+
+note over LR
+  fit() computes and stores mean/stddev.
+  predict() normalizes using stored stats.
+end note
+
+@enduml

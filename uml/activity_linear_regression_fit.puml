@@ -1,0 +1,36 @@
+@startuml
+!include ../um-theme.puml
+
+title libtea — Activity (LinearRegression::fit)
+
+start
+
+if (X empty?) then (yes)
+  stop
+else (no)
+endif
+
+:n = X.size();
+:d = X[0].size();
+
+:compute mean[d] across rows;
+:compute stddev[d] across rows\n(eps stabilizer 1e-8);
+
+:Xn = normalize(X, mean, stddev);
+
+:weights[d] = 0;
+:bias = 0;
+
+repeat
+  :dw[d] = 0;
+  :db = 0;
+
+  :for each sample i\npred = dot(Xn[i], weights) + bias\nerror = pred - y[i]\naccumulate dw += error * Xn[i]\naccumulate db += error;
+
+  :weights -= lr * (dw / n);
+  :bias -= lr * (db / n);
+repeat while (epoch < epochs?) is (yes)
+
+stop
+
+@enduml
